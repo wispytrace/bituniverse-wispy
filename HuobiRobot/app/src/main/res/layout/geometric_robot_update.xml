@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="参数修改"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:background="@drawable/white_stroke"
+            >
+        </TextView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:background="@drawable/white_stroke_small">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="策略类型"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="货币种类"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="货币当前价格"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="区间上限价格"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="区间下限价格"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="网格数量"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="每格投入资金"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+
+            </TextView>
+
+            <Button
+                android:id="@+id/update_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="确定"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </Button>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/update_policy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="普通网格"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:id="@+id/update_currency_type"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="btcusdt"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <TextView
+                android:id="@+id/update_currency_price"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:textColor="#FFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+            <EditText
+                android:id="@+id/update_max_price"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke_small"
+                >
+
+            </EditText>
+            <EditText
+                android:id="@+id/update_min_price"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke_small"
+                >
+
+            </EditText>
+
+            <EditText
+                android:id="@+id/update_grid_num"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke_small"
+                >
+
+            </EditText>
+            <EditText
+                android:id="@+id/update_grid_per_invest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke_small"
+                >
+
+            </EditText>
+
+            <Button
+                android:id="@+id/update_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="取消"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

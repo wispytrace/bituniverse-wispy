@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity"
+    android:orientation="horizontal"
+    android:background="@drawable/white_stroke"
+    android:layout_marginBottom="-1dp"
+    android:layout_marginTop="-1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:text="网格交易 (USDTBTC)"
+                    android:background="@drawable/white_stroke_small">
+
+                </TextView>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_invese_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="总投资额: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/robot_hold_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="机器人持币量: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/float_profit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_stroke_small"
+                    android:text="浮动利润: "></TextView>
+                <TextView
+                    android:id="@+id/total_profit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="总利润: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_year_profit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="年化收益率："
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/currency_now_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="当前价格: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_max_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="最高价格: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/robot_min_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="最低价格: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+            </TableRow>
+
+            <TableRow>
+                    <TextView
+                        android:id="@+id/robot_grid_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="网格数量: "
+                        android:background="@drawable/white_stroke_small">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/amount_per_grid"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="每格买卖金额: "
+                        android:background="@drawable/white_stroke_small">
+                    </TextView>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_grid_profit_rate"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="单位网格利润: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/robot_profit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="网格套利利润: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_trade_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="交易次数: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/robot_run_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="运行时间: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:id="@+id/robot_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="机器人id: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/robot_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="状态: "
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+            </TableRow>
+
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:id="@+id/robot_pause"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke_small"
+                android:gravity="center"
+                android:text="暂停/恢复"
+                android:textColor="#FFF"
+                android:textAlignment="center"></TextView>
+            <TextView
+                android:id="@+id/robot_delete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="删除"
+                android:textColor="#FFF"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+            <TextView
+                android:id="@+id/robot_update"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="修改"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+            <TextView
+                android:id="@+id/robot_order_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="详细交易记录"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:background="@drawable/white_stroke_small">
+            </TextView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

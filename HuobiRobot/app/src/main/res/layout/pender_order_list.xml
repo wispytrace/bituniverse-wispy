@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity"
+    android:orientation="horizontal"
+    android:background="@drawable/white_stroke"
+    android:layout_marginBottom="-1dp"
+    android:layout_marginTop="-1dp"
+    android:layout_margin="5dp"
+    >
+    <TextView
+        android:id="@+id/order_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="1 "
+        android:gravity="center"
+        android:background="@drawable/white_stroke_small">
+    </TextView>
+    <TextView
+        android:id="@+id/pender_order_price"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:text="213213213 "
+        android:background="@drawable/white_stroke_small">
+    </TextView>
+    <TextView
+        android:id="@+id/pender_order_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:text="0.08%"
+        android:background="@drawable/white_stroke_small">
+    </TextView>
+
+</LinearLayout>

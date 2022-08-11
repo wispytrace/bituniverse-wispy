@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:orientation="vertical">
+<!--    api添加-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/white_stroke">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="api密钥绑定"
+                android:gravity="center"
+                android:textColor="#FFF"
+                android:background="@drawable/white_stroke"
+                >
+            </TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@drawable/white_stroke_small">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="api_key:"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:background="@drawable/white_stroke">
+            </TextView>
+
+            <EditText
+                android:id="@+id/api_key"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke"
+                >
+
+            </EditText>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@drawable/white_stroke">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="secret_key:"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:background="@drawable/white_stroke">
+            </TextView>
+
+            <EditText
+                android:id="@+id/secret_key"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/white_stroke"
+                >
+
+            </EditText>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/key_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="确定"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </Button>
+
+            <Button
+                android:id="@+id/key_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="取消"
+                android:gravity="center"
+                android:background="@drawable/white_stroke_small">
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+        <!--    账户名修改添加-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="账户名修改"
+                    android:gravity="center"
+                    android:textColor="#FFF"
+                    android:background="@drawable/white_stroke"
+                    >
+                </TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/white_stroke_small">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="账户名称:"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke">
+                </TextView>
+
+                <EditText
+                    android:id="@+id/account_nickname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_stroke"
+                    >
+
+                </EditText>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/account_nickname_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="确定"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </Button>
+
+                <Button
+                    android:id="@+id/account_nickname_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="取消"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </Button>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="当前账户"
+                    android:gravity="center"
+                    android:textColor="#FFF"
+                    android:background="@drawable/white_stroke"
+                    >
+                </TextView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/white_stroke_small">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="当前账户ID:"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/account_current"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="空"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+            </LinearLayout>
+-
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/white_stroke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@drawable/white_stroke_small">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="当前账户api_key:"
+                        android:textColor="#FFF"
+                        android:gravity="center"
+                        android:background="@drawable/white_stroke_small">
+                    </TextView>
+
+
+                    <TextView
+                        android:id="@+id/api_current"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="空"
+                        android:textColor="#FFF"
+                        android:gravity="center"
+                        android:background="@drawable/white_stroke_small">
+                    </TextView>
+
+    </LinearLayout>
+
+
+    </LinearLayout>
+<!-- account 切换-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="账户切换"
+                    android:gravity="center"
+                    android:textColor="#FFF"
+                    android:background="@drawable/white_stroke"
+                    >
+                </TextView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/white_stroke_small">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="账户选择:"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+
+                <Spinner
+                    android:id="@+id/account_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:spinnerMode="dropdown"
+                    android:dropDownVerticalOffset="45dp"
+                    android:background="@drawable/white_stroke"
+                    android:layout_weight="1">
+                </Spinner>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/account_select_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="确定"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </Button>
+
+                <Button
+                    android:id="@+id/account_select_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="取消"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </Button>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

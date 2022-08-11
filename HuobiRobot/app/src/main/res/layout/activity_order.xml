@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/order_pender"
+            android:layout_weight="1"
+            android:text="挂单详情"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:background="@drawable/balck_stroke"
+            >
+        </Button>
+
+        <Button
+            android:id="@+id/order_trade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="交易详情"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:background="@drawable/white_stroke"
+            >
+        </Button>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:orientation="vertical"
+        android:id="@+id/order_content"
+        android:background="@drawable/white_stroke">
+
+    </LinearLayout>
+
+</LinearLayout>

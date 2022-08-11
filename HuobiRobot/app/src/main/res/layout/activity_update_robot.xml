@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="参数修改"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:background="@drawable/white_stroke"
+            >
+        </TextView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/update_robot_content"
+        android:orientation="horizontal"
+        android:background="@drawable/white_stroke"
+        >
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/update_robot_parameter_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="点击计算参数"
+        android:background="@drawable/white_stroke"
+        >
+
+    </Button>
+    <LinearLayout
+        android:id="@+id/update_robot_parameter"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:orientation="horizontal"
+        android:background="@drawable/white_stroke"
+        >
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

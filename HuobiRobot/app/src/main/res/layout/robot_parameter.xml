@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/parameter_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="当前价格: "
+        android:background="@drawable/white_stroke_small">
+    </TextView>
+        <TextView
+            android:id="@+id/parameter_avaible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="可用资金: "
+            android:background="@drawable/white_stroke_small">
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/parameter_per_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="每格利润/%: "
+            android:background="@drawable/white_stroke_small">
+        </TextView>
+
+        <TextView
+            android:id="@+id/parameter_need"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="需要资金: "
+            android:background="@drawable/white_stroke_small">
+        </TextView>
+
+
+
+    </LinearLayout>

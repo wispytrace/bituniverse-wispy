@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/white_stroke_small">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="货币种类"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="区间上限价格"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="区间下限价格"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="每格卖出的百分比\\%"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="每格买入的百分比\\%"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="每格下单金额"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="总投入金额"
+            android:textColor="#FFF"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+
+        </TextView>
+
+        <Button
+            android:id="@+id/infinite_policy_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="确定"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+        </Button>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/infinite_policy_currency_type"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown"
+            android:dropDownVerticalOffset="45dp"
+            android:background="@null"
+            android:layout_weight="1"
+            >
+
+        </Spinner>
+
+        <EditText
+            android:id="@+id/infinite_policy_max_price"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <EditText
+            android:id="@+id/infinite_policy_min_price"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <EditText
+            android:id="@+id/infinite_policy_sell_percent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <EditText
+            android:id="@+id/infinite_policy_buy_percent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <EditText
+            android:id="@+id/infinite_policy_per_invest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <EditText
+            android:id="@+id/infinite_policy_expect_money"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/white_stroke_small"
+            >
+
+        </EditText>
+        <Button
+            android:id="@+id/infinite_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="取消"
+            android:gravity="center"
+            android:background="@drawable/white_stroke_small">
+        </Button>
+
+    </LinearLayout>
+
+</LinearLayout>
