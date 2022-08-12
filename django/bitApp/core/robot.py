@@ -64,7 +64,7 @@ class RobotEntity:
     def post_order(self, post_order_type, amount, price, count):
         
         if count > MAX_REPOST_NUM:
-            raise Exception("创建订单失败")
+            raise Exception("资金不够，创建订单失败")
 
         try:
             order_record_id = self.user.trade_client.create_order(symbol=self.robot.robot_currency_type,
@@ -72,7 +72,8 @@ class RobotEntity:
                                                                    order_type=post_order_type,
                                                                    source=OrderSource.API, amount=amount, price=price)
         except Exception as e:
-            logger.error(repr(e))
+            if count == 0:
+                logger.error(repr(e))
             order_record_id = self.post_order(post_order_type, amount, price, count+1)
             
         return order_record_id
@@ -116,7 +117,7 @@ class RobotEntity:
             create_result = self.user.trade_client.batch_create_order(order_config_list=order_config_list)
 
         except Exception as e:
-            logger.error(repr(e))
+            # logger.error(repr(e))
             create_result = self.post_batch_orders(order_config_list, count+1)
 
         return create_result
@@ -177,7 +178,7 @@ class RobotEntity:
             canceled_order_id = self.user.trade_client.cancel_order(self.robot.robot_currency_type, order_record_id)
 
         except Exception as e:
-            logger.error(repr(e))
+            # logger.error(repr(e))
             canceled_order_id = self.cancel_order(order_record_id, count+1)
 
 
@@ -251,7 +252,9 @@ class RobotEntity:
     def get_trade_order_list(self):
 
         trade_order_list = []
-        for order in self.order_list:
+        order_list = list(self.order_list)
+        order_list.sort(key=lambda x: int(x.order_id), reverse=True)
+        for order in order_list:
             if order.order_status == ORDER_CANCEL or order.order_status == ORDER_Fail or order.order_refer_id == ORDER_NONE_REF:
                 continue
 
@@ -295,13 +298,16 @@ class RobotEntity:
             trade_order['sell_time'] = (trade_order['sell_time']+datetime.timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S")
             trade_order['buy_time'] = (trade_order['buy_time']+datetime.timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S")
 
-            trade_order['id'] = max(sell_order.order_id, buy_order.order_id)
+            # trade_order['id'] = max(sell_order.order_id, buy_order.order_id)
 
             trade_order_list.append(trade_order)
+            
+            if len(trade_order_list) > 200:
+                break
 
-        trade_order_list.sort(key=lambda x: int(x['id']), reverse=True)
-        size = min(len(trade_order_list), 200)
-        trade_order_list = trade_order_list[:size]
+        # trade_order_list.sort(key=lambda x: int(x['id']), reverse=True)
+        # size = min(len(trade_order_list), 200)
+        # trade_order_list = trade_order_list[:size]
 
         return trade_order_list
 
@@ -510,13 +516,42 @@ class GeometricRobot(RobotEntity):
             supplied_order.order_refer_id = order.order_id
             supplied_order.save()
 
+    def check_supply_order(self):
+        order_list = Order.objects.filter(robot_id=self.robot.robot_id, order_status=ORDER_WAIT)
+        order_list = list(order_list)
+        if len(order_list) == self.policy.grid_num:
+            return
+        order_list.sort(key=lambda x: x.order_price)
+        if len(order_list) < 2:
+            return
+        mean_distance = order_list[1].order_price - order_list[0].order_price
+        currency_price = self.huobi.get_currency_price(self.robot.robot_currency_type)
+        for i in range(len(order_list) - 1):
+            distance = order_list[i+1].order_price - order_list[i].order_price
+            if distance > mean_distance * 1.5 and  math.fabs((currency_price - order_list[i].order_price)) > mean_distance * 1.5 and  len(order_list) < self.policy.grid_num:
+                order_price = (order_list[i+1].order_price + order_list[i].order_price) / 2
+                amount = round(self.policy.grid_invest, 6)
+                amount = max(amount, 1e-4)
+                if order_price > self.huobi.get_currency_price(self.robot.robot_currency_type):
+                    self.create_order(ORDER_SELL, amount, order_price)
+                else:
+                    self.create_order(ORDER_BUY, amount, order_price)
+
+            if distance < mean_distance * 0.5 and len(order_list) > self.policy.grid_num:
+                self.cancel_order(order_list[i].order_record_id, 0)
+                self.update_order_status(order_list[i])
+                print(order_list[i].order_price, order_list[i+1].order_price, distance, order_list[i].order_record_id)
+
+
     def update_order(self, orders):
 
-
-        trade_client = self.user.trade_client
-
+        self.check_supply_order()
         for order in orders:
-            if order.order_status == ORDER_WAIT:
+            self.update_order_status(order)
+ 
+    def update_order_status(self, order):
+           trade_client = self.user.trade_client
+           if order.order_status == ORDER_WAIT:
                 try:
                     order_info = trade_client.get_order(order_id=order.order_record_id)
                 except Exception as e:
@@ -524,7 +559,7 @@ class GeometricRobot(RobotEntity):
                     if self.robot.robot_status != ROBOT_OK:
                         order.order_status = ORDER_Fail
                         order.save()
-                    continue
+                    return
                 if order_info.state == OrderState.FILLED or order_info.state == OrderState.PARTIAL_CANCELED:
                     order.order_status = ORDER_FINISH
                     order.order_amount = float(order_info.filled_amount)
@@ -550,7 +585,6 @@ class GeometricRobot(RobotEntity):
                     order.order_status = ORDER_CANCEL
                     order.save()
                     # order.delete()
-
            
 
 
@@ -665,8 +699,6 @@ class InfiniteRobot(RobotEntity):
             if order_price < self.policy.min_price or order_price > self.policy.max_price:
                 return
 
-            # amount = round(self.policy.grid_invest / order_price, 6)
-            # amount = max(amount, 1e-4)
             supplied_order = self.create_order(ORDER_SELL, order.order_amount, order_price)
             if order.order_refer_id == ORDER_NONE_REF:
                 supplied_order.order_refer_id = order.order_id
@@ -687,12 +719,21 @@ class InfiniteRobot(RobotEntity):
 
             self.robot_summary.invested_money += amount * order_price
             self.robot_summary.save()
+        
+        else:
+            try:
+                buy_order = self.get_buy_order()
+                self.retrieve_order(buy_order, (1 - self.policy.rate_buy / 100) * order.order_price)
+            except Exception as e:
+                return
+        
+    def get_buy_order(self):
+        
+        buy_order = Order.objects.get(robot_id=self.robot.robot_id, order_status=ORDER_WAIT, order_type=ORDER_BUY)
+        
+        return buy_order
 
-
-
-
-
-    def retrieve_order(self, order):
+    def retrieve_order(self, order, retrieve_order_price=None):
 
         if (self.robot.robot_status != ROBOT_OK) or (order.order_type != ORDER_BUY):
             return
@@ -700,7 +741,7 @@ class InfiniteRobot(RobotEntity):
         currency_price = self.huobi.get_currency_price(self.robot.robot_currency_type)
 
 
-        if (currency_price - order.order_price >= order.order_price * (self.policy.rate_buy + self.policy.rate_sell) / 100 / (1 - self.policy.rate_buy / 100)):
+        if (currency_price - order.order_price >= order.order_price * (self.policy.rate_buy + self.policy.rate_sell) / 100 / (1 - self.policy.rate_buy / 100)) or (retrieve_order_price is not None):
 
             order_price = ((1 - self.policy.rate_buy / 100)) * currency_price
             order_price = round(order_price, 2)
@@ -713,6 +754,9 @@ class InfiniteRobot(RobotEntity):
             order.order_status = ORDER_CANCEL
             self.robot_summary.invested_money -= float(order.order_amount) * float(order.order_price)
             order.save()
+
+            if retrieve_order_price is not None:
+                order_price = retrieve_order_price
 
             amount = round(self.policy.grid_invest / order_price, 6)
             amount = max(amount, 1e-4)
@@ -727,48 +771,49 @@ class InfiniteRobot(RobotEntity):
 
     def update_order(self, orders):
 
+        for order in orders:
+            self.update_order_status(order)
+
+
+    def update_order_status(self, order):
 
         trade_client = self.user.trade_client
-        for order in orders:
-            if order.order_status == ORDER_WAIT:
-                try:
-                    order_info = trade_client.get_order(order_id=order.order_record_id)
-                except Exception as e:
-                    if self.robot.robot_status != ROBOT_OK:
-                        order.order_status = ORDER_Fail
-                        order.save()
-                    # logger.error("查询订单失败，其订单号为 " + str(order.order_record_id) + repr(e))
-                    continue
-                if order_info.state == OrderState.FILLED or order_info.state == OrderState.PARTIAL_CANCELED:
-                    order.order_status = ORDER_FINISH
-                    order.order_amount = float(order_info.filled_amount)
-                    order.order_price = float(order_info.price)
-                    order.order_create_time = datetime.datetime.fromtimestamp(int(order_info.created_at / 1000))
-                    order.order_finish_time = datetime.datetime.fromtimestamp(int(order_info.finished_at / 1000))
-                    order.order_transfer_fees = float(order_info.filled_fees)
-
-                    self.robot_summary.total_transfer_fee += float(order_info.filled_fees)
-                    if order_info.type == OrderType.SELL_LIMIT:
-                        self.robot_summary.hold_currency_num -= float(order_info.filled_amount)
-                        self.robot_summary.profit += (1 / (
-                                1 + 100 / self.policy.rate_sell)) * float(order_info.filled_amount) * float(
-                            order_info.price)
-                        self.robot_summary.invested_money -= order.order_amount * order.order_price
-                    else:
-                        self.robot_summary.hold_currency_num += float(order_info.filled_amount)
-
-
-                    self.supply_order(order)
+        if order.order_status == ORDER_WAIT:
+            try:
+                order_info = trade_client.get_order(order_id=order.order_record_id)
+            except Exception as e:
+                if self.robot.robot_status != ROBOT_OK:
+                    order.order_status = ORDER_Fail
                     order.save()
+                return
+            if order_info.state == OrderState.FILLED or order_info.state == OrderState.PARTIAL_CANCELED:
+                order.order_status = ORDER_FINISH
+                order.order_amount = float(order_info.filled_amount)
+                order.order_price = float(order_info.price)
+                order.order_create_time = datetime.datetime.fromtimestamp(int(order_info.created_at / 1000))
+                order.order_finish_time = datetime.datetime.fromtimestamp(int(order_info.finished_at / 1000))
+                order.order_transfer_fees = float(order_info.filled_fees)
 
-                elif order_info.state == OrderState.CANCELED or order_info.state == OrderState.PLACE_TIMEOUT or order_info.state == OrderState.FAILED:
-                    order.order_status = ORDER_CANCEL
-                    order.save()
-                    # order.delete()
+                self.robot_summary.total_transfer_fee += float(order_info.filled_fees)
+                if order_info.type == OrderType.SELL_LIMIT:
+                    self.robot_summary.hold_currency_num -= float(order_info.filled_amount)
+                    self.robot_summary.profit += (1 / (
+                            1 + 100 / self.policy.rate_sell)) * float(order_info.filled_amount) * float(
+                        order_info.price)
+                    self.robot_summary.invested_money -= order.order_amount * order.order_price
                 else:
-                    self.retrieve_order(order)
+                    self.robot_summary.hold_currency_num += float(order_info.filled_amount)
+                order.save()
+                self.supply_order(order)
 
-                self.robot_summary.save()
+            elif order_info.state == OrderState.CANCELED or order_info.state == OrderState.PLACE_TIMEOUT or order_info.state == OrderState.FAILED:
+                order.order_status = ORDER_CANCEL
+                order.save()
+            else:
+                pass
+                # self.retrieve_order(order)
 
-                # logger.info("订单号为" + str(order.order_record_id) + " 的订单被撤销了")
+            self.robot_summary.save()
+
+
 

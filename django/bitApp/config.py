@@ -1,7 +1,7 @@
 from unittest.mock import DEFAULT
 
 
-currency_arry = ["btcusdt", "etcbtc"]
+currency_arry = ["btcusdt"]
 
 ACCOUNT_OK = 0
 ACCOUNT_DELETE = -1
@@ -32,7 +32,7 @@ ROBOT_MODIFY_DELETE = 1
 STATUS_ERROR = -1
 STATUS_OK = 0
 
-MAX_ORDER_NUM = 50
+MAX_ORDER_NUM = 16
 
 MAX_REPOST_NUM = 4
 

@@ -522,8 +522,6 @@ def update(requests):
 
         for k, v in robot_orders.items():
             robot = Robot.objects.get(robot_id=k)
-            if robot.robot_policy_type == INFINITE_POLICY:
-                continue
             order_list = v
             robot_entity = RobotEntity.load_robot(robot)
             user = User.load_from_account_id(robot.robot_account_id)
@@ -539,8 +537,11 @@ def update(requests):
             user = User.load_from_account_id(robot.robot_account_id)
             robot_entity.set_user(user)
             robot_entity.set_huobi(huobi)
-            robot_entity.load_orders()
-            robot_entity.update_order(robot_entity.order_list)
+            try:
+                buy_order = robot_entity.get_buy_order()
+                robot_entity.retrieve_order(buy_order)
+            except Exception as e:
+                continue
 
 
 
@@ -576,11 +577,11 @@ def clear_orders(request):
         now_time = datetime.datetime.now()
         order_list = Order.objects.all()
         delet_count = 0
-        for order in order_list:
-            create_time = order.order_create_time.replace(tzinfo=None)
+        for i in range(len(order_list)):
+            create_time = order_list[i].order_create_time.replace(tzinfo=None)
             days = (now_time - create_time).days
-            if int(days) > 10:
-                order.delete()
+            if int(days) > 1 and order_list[i].order_status == ORDER_CANCEL:
+                order_list[i].delete()
                 delet_count += 1
 
         ret['status'] = STATUS_OK
