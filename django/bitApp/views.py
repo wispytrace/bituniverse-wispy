@@ -530,19 +530,13 @@ def update(requests):
             robot_entity.load_orders()
             robot_entity.update_order(order_list)
 
-        infinite_robots = Robot.objects.filter(robot_policy_type=INFINITE_POLICY)
-
+        infinite_robots = Robot.objects.filter(robot_policy_type=INFINITE_POLICY, robot_status=ROBOT_OK)
         for robot in infinite_robots:
             robot_entity = RobotEntity.load_robot(robot)
             user = User.load_from_account_id(robot.robot_account_id)
             robot_entity.set_user(user)
             robot_entity.set_huobi(huobi)
-            try:
-                buy_order = robot_entity.get_buy_order()
-                robot_entity.retrieve_order(buy_order)
-            except Exception as e:
-                continue
-
+            robot_entity.check_supply_order()
 
 
         ret['status'] = STATUS_OK

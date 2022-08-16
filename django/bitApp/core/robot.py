@@ -646,8 +646,8 @@ class InfiniteRobot(RobotEntity):
 
     def modify_robot(self, max_price, min_price, grid_invest, rate_buy, rate_sell, expect_money):
         
-        if expect_money >  self.policy.expect_money + grid_invest:
-            self.init_robot_order()
+        # if expect_money >  self.policy.expect_money + grid_invest:
+        #     self.init_robot_order()
 
         self.policy.max_price = max_price
         self.policy.min_price = min_price
@@ -768,6 +768,15 @@ class InfiniteRobot(RobotEntity):
             self.robot_summary.save()
             
 
+    def check_supply_order(self):
+        try:
+            buy_order = self.get_buy_order()
+            self.retrieve_order(buy_order)
+        except Exception as e:
+            if self.robot_summary.invested_money < self.policy.expect_money:
+                self.init_robot_order()
+                logger.error("重启无线网格机器人")
+                time.sleep(1)
 
     def update_order(self, orders):
 
