@@ -23,5 +23,7 @@ urlpatterns = [
     path('update', views.update, name='update'),
     path('clear_orders', views.clear_orders, name='clear_orders'),
     path('clear_api', views.clear_api, name='clear_api'),
+    path('check_robots', views.check_robots, name='check_robots'),
     path('modify_nickname', views.modify_nickname, name='modify_nickname')
+
 ]

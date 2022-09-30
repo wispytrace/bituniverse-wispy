@@ -137,12 +137,12 @@ class Test(TestCase):
         # list_obj = trade_client.get_order(order_id=559250761557186)
         # list_obj.print_object()
 
-    def test_cancel(self, order_id=596836322187502):
-        symbol_test = 'btcusdt'
-        trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-        canceled_order_id = trade_client.cancel_order(symbol_test, order_id)
-        print(canceled_order_id)
-        print(order_id)
+    # def test_cancel(self, order_id=596836322187502):
+    #     symbol_test = 'btcusdt'
+    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
+    #     canceled_order_id = trade_client.cancel_order(symbol_test, order_id)
+    #     print(canceled_order_id)
+    #     print(order_id)
 
     # def test_cancel_all(self):
     #     symbol_test = 'btcusdt'
@@ -244,8 +244,17 @@ class Test(TestCase):
     #     order_record_id = trade_client.create_order(symbol="btcusdt",
     #                                                            account_id=g_account_id,
     #                                                            order_type=OrderType.SELL_MARKET,
-    #                                                            source=OrderSource.API, amount=0.01, price=None)
-
+    #                                                            source=OrderSource.API, amount=0.00735, price=None)
+    def test_save_order(self):
+        order = Order(order_id=12, order_record_id=12, robot_id=1,
+                order_currency_type="btcusdt", order_type=0,
+                order_amount=12,
+                order_price=1222, order_status=ORDER_WAIT, order_create_time=datetime.datetime.now(),
+                order_finish_time=None)
+        order.save()
+        orders = Order.objects.all()
+        for order in orders:
+            print(order.__dict__)
 
     # def test_demo_all(self):
 
@@ -297,20 +306,20 @@ class Test(TestCase):
         #
         # print(files)
 
-    def test_date(self):
-        robot = Robot(robot_id=1, robot_summary_id='1', robot_policy_type=GEOMETRIC_POLICY,
-                      robot_policy_id=2,
-                      robot_currency_type='btcusdt', robot_status=ROBOT_PAUSE,
-                      robot_create_time=datetime.datetime.now())
-        time.sleep(1)
-        first = datetime.datetime.now()
-        second = robot.robot_create_time
-        create_time = robot.robot_create_time.replace(tzinfo=None)
-        print(int(time.mktime(create_time.timetuple())))
-        day = create_time.strftime("%Y/%m/%d %H:%M:%S")
-        print(day)
-        print(int((first-create_time).seconds))
-        print(str(datetime.timedelta(days=(first-first).days))[:-7])
+    # def test_date(self):
+    #     robot = Robot(robot_id=1, robot_summary_id='1', robot_policy_type=GEOMETRIC_POLICY,
+    #                   robot_policy_id=2,
+    #                   robot_currency_type='btcusdt', robot_status=ROBOT_PAUSE,
+    #                   robot_create_time=datetime.datetime.now())
+    #     time.sleep(1)
+    #     first = datetime.datetime.now()
+    #     second = robot.robot_create_time
+    #     create_time = robot.robot_create_time.replace(tzinfo=None)
+    #     print(int(time.mktime(create_time.timetuple())))
+    #     day = create_time.strftime("%Y/%m/%d %H:%M:%S")
+    #     print(day)
+    #     print(int((first-create_time).seconds))
+    #     print(str(datetime.timedelta(days=(first-first).days))[:-7])
 
     # def test_add_api(self):
     #     account_client = AccountClient(api_key=g_api_key, secret_key=g_secret_key)

@@ -15,6 +15,8 @@ class HuoBi:
 
         self.price_dict = {}
 
+        self.update_price()
+
     def get_currency_price(self, symbol_name):
 
         if self.price_dict.get(symbol_name) is None:

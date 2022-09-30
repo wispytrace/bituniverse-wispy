@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sslserver',
     'bitApp',
 ]
 
@@ -78,9 +79,23 @@ WSGI_APPLICATION = 'bitBack.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # },
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': os.path.join(BASE_DIR, 'db.mysql'),
+        'NAME': 'bituniverse',
+        'USER': 'root',
+        'PASSWORD': 'semto2022',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    },
+    'OPTIONS': {
+    # ...
+    'timeout': 20,
+    # ...
     }
 }
 
@@ -190,7 +205,7 @@ LOGGING = {
         #     'propagate': False
         # },
         'django': {
-            'handlers': ['console', 'error'],
+            'handlers': ['error'],
             'level': 'INFO',
             'propagate': False
         },

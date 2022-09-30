@@ -3,8 +3,6 @@ import os
 
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-
 from bitApp.core.user import User
 from bitApp.models import *
 from bitApp.config import *
@@ -15,7 +13,6 @@ import datetime
 
 import warnings
 
-from huobi.model import account
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger('log')
@@ -262,6 +259,13 @@ def add_geometric_robot(request):
 
     ret = {'status': STATUS_ERROR, 'message': None}
 
+    robots = Robot.objects.filter(robot_status=ROBOT_CREATING)
+    if len(robots) > 0:
+        ret['status'] = STATUS_OK
+        ret['message'] = '已有正在创建的机器人，请等待创建完成'
+        logger.error('已有正在创建的机器人，请等待创建完成')
+        return JsonResponse(ret)
+
     reqs = request.POST
 
     try:
@@ -279,7 +283,6 @@ def add_geometric_robot(request):
         robot_entity = RobotEntity.load_robot(robot)
         robot_entity.set_user(user)
         robot_entity.set_huobi(huobi)
-        robot_entity.load_orders()
         robot_entity.init_robot_order()
 
         ret['status'] = STATUS_OK
@@ -356,12 +359,16 @@ def update_geometric_robot(request):
         robot_id = int(reqs['robot_id'])
         robot = Robot.objects.get(robot_id=robot_id)
         robot_entity = RobotEntity.load_robot(robot)
+        user = User.load_from_account_id(robot.robot_account_id)
+        robot_entity.set_user(user)
+        robot_entity.set_huobi(huobi)
         max_price = float(reqs['max_price'])
         min_price = float(reqs['min_price'])
         grid_num = int(reqs['grid_num'])
         per_invest = float(reqs['per_invest'])
         expect_money = float(reqs['expect_money'])
         per_grid = float(reqs['per_grid'])
+
         robot_entity.modify_robot(max_price, min_price, grid_num, per_invest, expect_money, per_grid)
 
         ret['status'] = STATUS_OK
@@ -505,39 +512,113 @@ def update(requests):
 
     try:
         huobi.update_price()
-        orders = Order.objects.filter(order_status=ORDER_WAIT)
-        orders = list(orders)
-        orders.sort(key=lambda x: int(math.fabs(x.order_price - huobi.get_currency_price(x.order_currency_type))))
-        robot_orders = {}
+        orders_wait = Order.objects.filter(order_status=ORDER_WAIT)
+        robot_id_list = []
+        robot_buy_orders = {}
+        robot_sell_orders = {}
+        for order in orders_wait:
+            robot_id = order.robot_id
+            if robot_id not in robot_id_list:
+                robot_id_list.append(robot_id)
 
-        order_num = min(len(orders), MAX_ORDER_NUM)
+            if order.order_type == ORDER_BUY:
+                if robot_id not in robot_buy_orders.keys():
+                    robot_buy_orders[robot_id] = [order]
+                else:
+                    robot_buy_orders[robot_id].append(order)
 
-        for i in range(order_num):
-            robot_id = orders[i].robot_id
-            if robot_id not in robot_orders.keys():
-                order_list = [orders[i]]
-                robot_orders[robot_id] = order_list
-            else:
-                robot_orders[robot_id].append(orders[i])
+            elif order.order_type == ORDER_SELL:
+                if robot_id not in robot_sell_orders.keys():
+                    robot_sell_orders[robot_id] = [order]
+                else:
+                    robot_sell_orders[robot_id].append(order)
 
-        for k, v in robot_orders.items():
-            robot = Robot.objects.get(robot_id=k)
-            order_list = v
+        for robot_id in robot_id_list:
+            robot = Robot.objects.get(robot_id=robot_id)
             robot_entity = RobotEntity.load_robot(robot)
             user = User.load_from_account_id(robot.robot_account_id)
             robot_entity.set_user(user)
             robot_entity.set_huobi(huobi)
-            robot_entity.load_orders()
-            robot_entity.update_order(order_list)
 
-        infinite_robots = Robot.objects.filter(robot_policy_type=INFINITE_POLICY, robot_status=ROBOT_OK)
-        for robot in infinite_robots:
-            robot_entity = RobotEntity.load_robot(robot)
-            user = User.load_from_account_id(robot.robot_account_id)
-            robot_entity.set_user(user)
-            robot_entity.set_huobi(huobi)
-            robot_entity.check_supply_order()
+            if robot_id in robot_buy_orders.keys():
+                sorted_buy_orders = robot_buy_orders[robot_id]
+                sorted_buy_orders.sort(key=lambda x: float(math.fabs(x.order_price)), reverse=True)
+                for i in range(min(len(sorted_buy_orders), BASE_ORDER_NUM)):
+                    updated_order = robot_entity.update_order_status(sorted_buy_orders[i])
+                    if robot.robot_policy_type == INFINITE_POLICY and updated_order.order_status == ORDER_WAIT:
+                        robot_entity.retrieve_order(sorted_buy_orders[i])
+            
+            if robot_id in robot_sell_orders.keys():
+                sorted_sell_orders = robot_sell_orders[robot_id]
+                sorted_sell_orders.sort(key=lambda x: float(math.fabs(x.order_price)))
+                for i in range(min(len(sorted_sell_orders), BASE_ORDER_NUM)):
+                    robot_entity.update_order_status(sorted_sell_orders[i])
+            
 
+
+
+
+        # currency_orders = {}
+        # orders = []
+
+        # for order in orders_wait:
+        #     currency_type = order.order_currency_type
+        #     if currency_type not in currency_orders.keys():
+        #         order_list = [order]
+        #         currency_orders[currency_type] = order_list
+        #     else:
+        #         currency_orders[currency_type].append(order)
+
+        # for currency_type in currency_arry:
+        #     robots_num = Robot.objects.filter(robot_currency_type=currency_type, robot_status=ROBOT_OK)
+        #     if currency_type not in currency_orders.keys():
+        #         continue
+        #     order_list = currency_orders[currency_type]
+        #     orders_num = min(int(BASE_ORDER_NUM * len(robots_num)), len(order_list))
+        #     order_list.sort(key=lambda x: float(math.fabs(x.order_price - huobi.get_currency_price(x.order_currency_type))))
+
+        #     for i in range(orders_num):            
+        #         orders.append(order_list[i])
+
+        # robot_orders = {}
+        # order_num = min(len(orders), MAX_ORDER_NUM)
+
+        # for i in range(order_num):
+        #     robot_id = orders[i].robot_id
+        #     if robot_id not in robot_orders.keys():
+        #         order_list = [orders[i]]
+        #         robot_orders[robot_id] = order_list
+        #     else:
+        #         robot_orders[robot_id].append(orders[i])
+
+        # for k, v in robot_orders.items():
+        #     robot = Robot.objects.get(robot_id=k)
+        #     if robot.robot_policy_type == INFINITE_POLICY:
+        #         continue
+        #     order_list = v
+        #     robot_entity = RobotEntity.load_robot(robot)
+        #     user = User.load_from_account_id(robot.robot_account_id)
+        #     robot_entity.set_user(user)
+        #     robot_entity.set_huobi(huobi)
+        #     robot_entity.update_order(order_list)
+
+        # infinite_robots = Robot.objects.filter(robot_policy_type=INFINITE_POLICY, robot_status=ROBOT_OK)
+        # for robot in infinite_robots:
+        #     robot_entity = RobotEntity.load_robot(robot)
+        #     user = User.load_from_account_id(robot.robot_account_id)
+        #     robot_entity.set_user(user)
+        #     robot_entity.set_huobi(huobi)
+        #     try:
+        #         sell_order_list = Order.objects.filter(robot_id=robot_entity.robot.robot_id, order_status=ORDER_WAIT, order_type=ORDER_SELL)
+        #         sell_order_list = list(sell_order_list)
+        #         if len(sell_order_list) != 0:
+        #             sell_order_list.sort(key=lambda x: x.order_price)
+        #             for i in range(int(BASE_ORDER_NUM)):
+        #                 robot_entity.update_order(sell_order_list[i])
+        #         buy_orders = robot_entity.get_buy_orders()
+        #         robot_entity.retrieve_order(buy_orders[0])
+        #     except Exception as e:
+        #         pass
 
         ret['status'] = STATUS_OK
         ret['message'] = '数据更新成功'
@@ -548,6 +629,31 @@ def update(requests):
 
     return JsonResponse(ret)
 
+
+def check_robots(request):
+
+    ret = {'status': STATUS_ERROR, 'message': None}
+
+    try:
+
+        robots = Robot.objects.filter(robot_status=ROBOT_OK)
+
+        for robot in robots:
+            robot_entity = RobotEntity.load_robot(robot)
+            user = User.load_from_account_id(robot.robot_account_id)
+            robot_entity.set_user(user)
+            robot_entity.set_huobi(huobi)
+            robot_entity.check_orders()
+
+        ret['status'] = STATUS_OK
+        ret['message'] = '数据更新成功'
+
+
+    except Exception as e:
+        ret['message'] = repr(e)
+        logger.error(repr(e))
+
+    return JsonResponse(ret)
 def clear_api(request):
 
     ret = {'status': STATUS_ERROR, 'message': None}
@@ -569,7 +675,7 @@ def clear_orders(request):
 
     try:
         now_time = datetime.datetime.now()
-        order_list = Order.objects.all()
+        order_list = Order.objects.filter(order_status=ORDER_CANCEL)
         delet_count = 0
         for i in range(len(order_list)):
             create_time = order_list[i].order_create_time.replace(tzinfo=None)
@@ -580,6 +686,7 @@ def clear_orders(request):
 
         ret['status'] = STATUS_OK
         ret['delet_count'] = delet_count
+        ret['message'] = '数据更新成功'
 
 
 

@@ -59,9 +59,9 @@ class InfinitePolicy(models.Model):
 
 
 class Order(models.Model):
-
-    order_id = models.IntegerField(db_column='order_id', primary_key=True)
-    order_record_id = models.IntegerField(db_column='order_record_id')
+    
+    order_id = models.AutoField(db_column='order_id', primary_key=True)
+    order_record_id = models.CharField(db_column='order_record_id', max_length=20)
     robot_id = models.IntegerField(db_column='robot_id')
     order_currency_type = models.CharField(db_column='order_currency_type', max_length=20)
     order_amount = models.FloatField(db_column='order_amount')
@@ -75,7 +75,7 @@ class Order(models.Model):
     order_flag = models.IntegerField(db_column='order_flag', default=ORDER_NORMAL_FLAG)
 
     class Meta:
-        db_table = 'order'
+        db_table = 'robot_order'
 
 
 class Api(models.Model):

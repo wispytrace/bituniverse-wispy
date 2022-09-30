@@ -1,7 +1,8 @@
 from unittest.mock import DEFAULT
 
 
-currency_arry = ["btcusdt"]
+currency_arry = ["btcusdt", "ethusdt", "ltcusdt"]
+quote_arry = {"btcusdt": "btc", "ethusdt": "eth", "ltcusdt":"ltc"}
 
 ACCOUNT_OK = 0
 ACCOUNT_DELETE = -1
@@ -11,6 +12,7 @@ INFINITE_POLICY = 1
 
 
 ROBOT_OK = 0
+ROBOT_CREATING = 2
 ROBOT_PAUSE = 1
 ROBOT_DELETE = -1
 
@@ -24,6 +26,7 @@ ORDER_SELL = 1
 
 ORDER_NONE_REF = -1
 ORDER_NORMAL_FLAG = 0
+ORDER_CANCEL_FLAG = 1
 
 
 ROBOT_MODIFY_PAUSE_RESUME = 0
@@ -32,9 +35,13 @@ ROBOT_MODIFY_DELETE = 1
 STATUS_ERROR = -1
 STATUS_OK = 0
 
-MAX_ORDER_NUM = 16
+MAX_ORDER_NUM = 50
+BASE_ORDER_NUM = 2
+DISTANCE_RATIO = 0.2
+DISTANCE_MAX = 2
 
-MAX_REPOST_NUM = 4
+MAX_REPOST_NUM = 2
+MAX_DAYS = 5
 
 DEFAULT_API = "空"
 INVALID_ACCOUNT = -1
