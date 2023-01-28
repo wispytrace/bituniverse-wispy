@@ -1,0 +1,32 @@
+1. 安装anaconda， 创建环节 conda create -n robot python==3.8, pip install numpy, requests, django， requirements.txt， pymysql， pip install django-sslserver
+ pip install aiohttp
+
+2. 安装mysql
+
+rpm -ivh http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+
+yum install -y mysql-server
+
+systemctl enable mysqld.service
+
+systemctl list-unit-files | grep mysqld
+
+systemctl start mysqld.service
+
+grep 'temporary password' /var/log/mysqld.log
+
+mysql>SET PASSWORD = PASSWORD('12345678);
+
+set password = "1234567";
+
+3. 启动django，先删除migrations文件夹东西并且重启init.py
+python manage.py makemiragtions
+
+python manage.py migrate
+
+4. 配置防火墙
+运行相应的输入口
+
+5. 修改DNS
+
+
