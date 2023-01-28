@@ -160,9 +160,9 @@ public class AddRobot {
         TextView parameter_need = mainActivity.findViewById(R.id.parameter_need);
 
         parameter_price.setText("当前价格:" + jsonObject.getString("currency_price"));
-        parameter_avaible.setText("可用usdt: "+jsonObject.getString("usdt_num") +"\n" + "可用btc: "+ jsonObject.getString("btc_num"));
+        parameter_avaible.setText("可用usdt: "+jsonObject.getString("usdt_num") +"\n" + "可用货币数: "+ jsonObject.getString("btc_num"));
         parameter_per_grid.setText("每格利润/%: "+jsonObject.getString("per_grid"));
-        parameter_need.setText("需要usdt: "+jsonObject.getString("usdt_need")+"\n需要btc: "+jsonObject.getString("btc_need")+"\n usdt总价值:"+need_money);
+        parameter_need.setText("需要usdt: "+jsonObject.getString("usdt_need")+"\n需要货币数: "+jsonObject.getString("btc_need")+"\n usdt总价值:"+need_money);
 
         if (need_money > (usdt_num + btc_num*currency_price) || ((btc_need < btc_num) && (usdt_num < usdt_need))){
             isValidParameter = ERROR_PARAMETER;

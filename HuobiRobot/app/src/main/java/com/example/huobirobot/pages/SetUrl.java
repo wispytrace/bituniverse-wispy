@@ -22,6 +22,7 @@ public class SetUrl {
     private TextView secret_key = null;
     private Button key_confirm = null;
     private Button key_cancel = null;
+    private Spinner plantform_select = null;
 
     private TextView account_nickname = null;
     private Button account_nickname_confirm = null;
@@ -29,6 +30,8 @@ public class SetUrl {
 
 
     public TextView account_current = null;
+    public TextView account_pantform_current = null;
+
 
     private TextView api_current = null;
 
@@ -44,18 +47,19 @@ public class SetUrl {
     public String[] account_list = {"空"};
     public String[] api_list = {"空"};
     public String[] nickname_list = {"空"};
+    public String[] plantform_list = {"空"};
+    public String[] account_plantform = {"空"};
 
 
     public String currenct_api = api_list[0];
     public String currenct_account = account_list[0];
     public String current_nickname = nickname_list[0];
+    public String current_plantform = plantform_list[0];
 
     public int selected_index = 0;
+    
 
-
-
-
-    public String ipUrl = "http://154.215.142.112:8000";
+    public String ipUrl = "http://8.210.174.164:8000";
 
     public void Shift(){
 
@@ -64,11 +68,12 @@ public class SetUrl {
 
         api_key = mainActivity.findViewById(R.id.api_key);
         secret_key = mainActivity.findViewById(R.id.secret_key);
+        plantform_select = mainActivity.findViewById(R.id.plantform_select);
         key_confirm = mainActivity.findViewById(R.id.key_confirm);
         key_cancel = mainActivity.findViewById(R.id.key_cancel);
 
         account_current = mainActivity.findViewById(R.id.account_current);
-
+        account_pantform_current =mainActivity.findViewById(R.id.account_plantform_current);
         api_current = mainActivity.findViewById(R.id.api_current);
 
         account_select = mainActivity.findViewById(R.id.account_select);
@@ -88,11 +93,13 @@ public class SetUrl {
                     mainActivity.showMessage("已绑定API，不支持切换重复绑定其他API");
                     return;
                 }
+                int index = account_select.getSelectedItemPosition();
+                current_plantform = plantform_list[index];
                 mainActivity.showMessage("命令执行中，请等待跳转......");
                 IntnetThread intnetThread = new IntnetThread();
                 intnetThread.setMainActivity(mainActivity, MainActivity.State.SET_ADD_API);
-                String[] attributes = {"api_key","secret_key", "account_id"};
-                String[] values = {api_key.getText().toString(), secret_key.getText().toString(), currenct_account};
+                String[] attributes = {"api_key","secret_key", "plantform","account_id"};
+                String[] values = {api_key.getText().toString(), secret_key.getText().toString(), plantform_select.getSelectedItem().toString(), currenct_account};
                 intnetThread.setParameter(attributes, values);
                 intnetThread.setUrl("/api/add_api");
                 intnetThread.start();
@@ -136,8 +143,10 @@ public class SetUrl {
 
         account_current.setText(currenct_account);
         api_current.setText(currenct_api);
+        account_pantform_current.setText(current_plantform);
 
         initSpinner(account_select, nickname_list);
+        initSpinner(plantform_select, plantform_list);
 
         account_select_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +155,7 @@ public class SetUrl {
                 mainActivity.setUrl.currenct_account = mainActivity.setUrl.account_list[index];
                 mainActivity.setUrl.currenct_api = mainActivity.setUrl.api_list[index];
                 mainActivity.setUrl.current_nickname = mainActivity.setUrl.nickname_list[index];
+                mainActivity.setUrl.current_plantform = mainActivity.setUrl.account_plantform[index];
                 mainActivity.setUrl.selected_index = index;
                 if (mainActivity.setUrl.currenct_account.compareTo("空") == 0){
                     mainActivity.showMessage("当前无账户，请先创建账户");
@@ -186,7 +196,9 @@ public class SetUrl {
         }
         String api_key = jsonObject.getString("api_key");
         currenct_api = api_key;
+        current_plantform = plantform_select.getSelectedItem().toString();
         api_list[selected_index] = api_key;
+        account_plantform[selected_index] = current_plantform;
         mainActivity.robotInfo.Shift();
     }
 
@@ -216,29 +228,48 @@ public class SetUrl {
             }
         }
 
+        int plantform_count = jsonObject.getInt("plantform_count");
+
+        if (plantform_count !=0) {
+            JSONObject plantforms = jsonObject.getJSONObject("plantforms");
+            plantform_list = new String[plantform_count];
+            for (int i = 0; i < plantform_count; i++) {
+                plantform_list[i] = plantforms.getString(Integer.toString(i));
+            }
+        }
+
+
         int count = jsonObject.getInt("count");
         if (count != 0) {
             JSONObject apis = jsonObject.getJSONObject("apis");
             JSONObject accounts = jsonObject.getJSONObject("accounts");
             JSONObject nicknames = jsonObject.getJSONObject("nicknames");
+            JSONObject account_plantforms = jsonObject.getJSONObject("account_plantforms");
+
             api_list = new String[count];
             account_list = new String[count];
             nickname_list = new String[count];
+            account_plantform = new String[count];
 
             for (int i = 0; i < count; i++) {
                 api_list[i] = apis.getString(Integer.toString(i));
                 account_list[i] = accounts.getString(Integer.toString(i));
                 nickname_list[i] = nicknames.getString(Integer.toString(i));
+                account_plantform[i] = account_plantforms.getString(Integer.toString(i));
             }
 
         }else {
             account_list = new String[] {"空"};
             api_list = new String[] {"空"};
             nickname_list = new String[] {"空"};
+            account_plantform = new String[] {"空"};
+
         }
+
         currenct_api = api_list[0];
         currenct_account = account_list[0];
         current_nickname = nickname_list[0];
+        current_plantform = account_plantform[0];
     }
 
 }

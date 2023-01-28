@@ -1,0 +1,24 @@
+bash <(curl -sL https://git.io/v2ray.sh) online old
+管理命令
+查看 V2Ray 配置信息：v2ray info
+修改 V2Ray 配置：v2ray config
+生成 V2Ray 配置文件链接：v2ray link
+生成 V2Ray 配置信息链接：v2ray infolink
+生成 V2Ray 配置二维码链接：v2ray qr
+修改 Shadowsocks 配置：v2ray ss
+查看 Shadowsocks 配置信息：v2ray ssinfo
+生成 Shadowsocks 配置二维码链接：v2ray ssqr
+查看 V2Ray 运行状态：v2ray status
+启动 V2Ray：v2ray start
+停止 V2Ray：v2ray stop
+重启 V2Ray：v2ray restart
+查看 V2Ray：运行日志 v2ray log
+更新 V2Ray：v2ray update
+更新 V2Ray 管理脚本：v2ray update.sh
+卸载 V2Ray：v2ray uninstall
+相关目录
+V2Ray 配置文件路径：/etc/v2ray/config.json
+Caddy 配置文件路径：/etc/caddy/Caddyfile
+脚本配置文件路径：/etc/v2ray/233blog_v2ray_backup.conf
+
+nohup bash /root/django/start.sh > /root/django/log.out 2>&1 &

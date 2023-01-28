@@ -72,7 +72,7 @@ class Order(models.Model):
     order_create_time = models.DateTimeField(db_column='order_create_time')
     order_finish_time = models.DateTimeField(db_column='order_finish_time', null=True)
     order_refer_id = models.IntegerField(db_column='order_refer_id', default=ORDER_NONE_REF)
-    order_flag = models.IntegerField(db_column='order_flag', default=ORDER_NORMAL_FLAG)
+    order_flag = models.IntegerField(db_column='order_flag', default=ORDER_NONE_FLAG)
 
     class Meta:
         db_table = 'robot_order'
@@ -95,6 +95,7 @@ class Account(models.Model):
     system_id = models.IntegerField(db_column='system_id')
     account_nickname = models.CharField(db_column='account_nickname', max_length=300, default='')
     account_password = models.CharField(db_column='account_password', max_length=100, default='')
+    account_plantform = models.CharField(db_column='account_plantform', max_length=50, default=DEFAULT_PLANTFORM)
     account_status = models.IntegerField(db_column='account_status', default=ACCOUNT_OK)
 
     class Meta:

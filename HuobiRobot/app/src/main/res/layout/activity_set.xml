@@ -91,6 +91,34 @@
             </EditText>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@drawable/white_stroke">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="平台:"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:background="@drawable/white_stroke">
+            </TextView>
+
+            <Spinner
+                android:id="@+id/plantform_select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown"
+                android:dropDownVerticalOffset="45dp"
+                android:background="@drawable/white_stroke"
+                android:layout_weight="1">
+            </Spinner>
+
+        </LinearLayout>
 
 
         <LinearLayout
@@ -264,7 +292,46 @@
         </LinearLayout>
 
 
-    <LinearLayout
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/white_stroke_small">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="当前账户平台:"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+                <TextView
+                    android:id="@+id/account_plantform_current"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="空"
+                    android:textColor="#FFF"
+                    android:gravity="center"
+                    android:background="@drawable/white_stroke_small">
+                </TextView>
+
+            </LinearLayout>
+            -
+        </LinearLayout>
+
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"

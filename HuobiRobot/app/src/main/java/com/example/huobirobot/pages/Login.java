@@ -47,6 +47,7 @@ public class Login {
                 mainActivity.setUrl.currenct_account = mainActivity.setUrl.account_list[index];
                 mainActivity.setUrl.currenct_api = mainActivity.setUrl.api_list[index];
                 mainActivity.setUrl.current_nickname = mainActivity.setUrl.nickname_list[index];
+                mainActivity.setUrl.current_plantform = mainActivity.setUrl.account_plantform[index];
                 mainActivity.setUrl.selected_index = index;
                 if (mainActivity.setUrl.currenct_account.compareTo("空") == 0){
                     mainActivity.showMessage("当前无账户，请先创建账户");

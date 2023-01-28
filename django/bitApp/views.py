@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -7,16 +8,21 @@ from bitApp.core.user import User
 from bitApp.models import *
 from bitApp.config import *
 
-from bitApp.core.platform import *
+from bitApp.core.plantform import *
 from bitApp.core.robot import *
 import datetime
+import random
 
 import warnings
 
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger('log')
-huobi = HuoBi()
+
+plantforms = {HUOBI_STR: HuoBi(), BIAN_STR: BiAn(), OK_STR: OKEx()}
+# huobi = HuoBi()
+# bian = BiAn()
+
 
 def test(request):
 
@@ -26,11 +32,12 @@ def test(request):
 def get_set(request):
 
     ret = {'status': STATUS_ERROR, 'message': None}
-
     try:
-        ret['currencys'], ret['currency_count'] = huobi.get_currencys()
+        ret['currencys'], ret['currency_count'] = PlantForm.get_currencys()
 
-        ret['apis'], ret['accounts'], ret['nicknames'], ret['count'] = huobi.get_accounts_apis()
+        ret['plantforms'], ret['plantform_count'] = PlantForm.get_plantforms()
+
+        ret['apis'], ret['accounts'], ret['nicknames'], ret['account_plantforms'], ret['count'] = PlantForm.get_accounts_apis()
 
         ret['status'] = STATUS_OK
 
@@ -48,8 +55,10 @@ def add_api(request):
     try:
         api_key = reqs['api_key']
         secret_key = reqs['secret_key']
+        plantform = reqs['plantform']
         account_id = int(reqs['account_id'])
-        huobi.add_api(api_key, secret_key, account_id)
+
+        PlantForm.add_platnform_api(plantform, api_key, secret_key, account_id)
 
         ret['valid'] = STATUS_OK
         ret['api_key'] = api_key
@@ -66,7 +75,7 @@ def add_account(request):
     ret = {'status': STATUS_ERROR, 'message': None}
 
     try:
-        huobi.add_account()
+        PlantForm.add_account()
         return get_set(request)
 
     except Exception as e:
@@ -82,7 +91,7 @@ def delete_account(request):
 
     try:
         account_id = int(reqs['account_id'])
-        ret['valid'] = huobi.delet_account(account_id)
+        ret['valid'] = PlantForm.delet_account(account_id)
         ret['status'] = STATUS_OK
 
     except Exception as e:
@@ -100,7 +109,7 @@ def modify_nickname(request):
     try:
         account_id = int(reqs['account_id'])
         account_nickname = reqs['account_nickname']
-        huobi.modify_account_nickname(account_id, account_nickname)
+        PlantForm.modify_account_nickname(account_id, account_nickname)
         ret['account_nickname'] = account_nickname
         ret['status'] = STATUS_OK
 
@@ -126,12 +135,15 @@ def get_robot_info(request):
         robots = Robot.objects.filter(robot_account_id=account_id)
         user = User.load_from_account_id(account_id)
 
+        plantform = plantforms[user.plantform]
+
+
         for robot in robots:
             if robot.robot_status == ROBOT_DELETE:
                 continue
             robot_entity = RobotEntity.load_robot(robot)
             robot_entity.set_user(user)
-            robot_entity.set_huobi(huobi)
+            robot_entity.set_plantform(plantform)
             robot_entity.load_orders()
             robot_info = robot_entity.get_robot_info()
             if robot.robot_status == ROBOT_OK:
@@ -153,7 +165,7 @@ def get_robot_info(request):
         ret['data'] = info_list
         ret['status'] = STATUS_OK
         ret['message'] = "数据更新成功"
-        ret['balance'] = user.get_balance('usdt')
+        ret['balance'] = plantform.get_balance('usdt', user)
 
     except Exception as e:
         logger.error(repr(e))
@@ -200,9 +212,15 @@ def delet_robot(request):
         robot_entity = RobotEntity.load_robot(robot)
 
         user = User.load_from_account_id(robot.robot_account_id)
+
+        plantform = plantforms[user.plantform]
+
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+        robot_entity.set_plantform(plantform)
         robot_entity.load_orders()
+        
+        robot_entity.robot.robot_status = ROBOT_DESTORYING
+        robot_entity.robot.save()
         if cancel_order == 1:
             robot_entity.cancel_orders()
             if cancel_currency == 1:
@@ -231,6 +249,7 @@ def get_invest_parameter(request):
         robot_type = int(reqs['robot_type'])
         account_id = int(reqs['account_id'])
         user = User.load_from_account_id(account_id)
+        plantform = plantforms[user.plantform]
 
         if robot_type == GEOMETRIC_POLICY:
             currency_type = reqs['currency_type']
@@ -239,12 +258,12 @@ def get_invest_parameter(request):
             grid_num = int(reqs['grid_num'])
             per_invest = float(reqs['per_invest'])
             ret['invest_data'] = GeometricRobot.get_robot_invest_parameter(currency_type, max_price, min_price, grid_num,
-                                                      per_invest, huobi, user)
+                                                      per_invest, plantform, user)
         else:
             currency_type = reqs['currency_type']
             sell_percent = float(reqs['sell_percent'])
             expect_money = float(reqs['expect_money'])
-            ret['invest_data'] = InfiniteRobot.get_robot_invest_parameter(currency_type, sell_percent, expect_money, huobi, user)
+            ret['invest_data'] = InfiniteRobot.get_robot_invest_parameter(currency_type, sell_percent, expect_money, plantform, user)
 
         ret['message'] = '数据更新成功'
         ret['valid'] = STATUS_OK
@@ -282,7 +301,11 @@ def add_geometric_robot(request):
         user = User.load_from_account_id(account_id)
         robot_entity = RobotEntity.load_robot(robot)
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+
+        plantform = plantforms[user.plantform]
+
+
+        robot_entity.set_plantform(plantform)
         robot_entity.init_robot_order()
 
         ret['status'] = STATUS_OK
@@ -313,7 +336,11 @@ def add_infinite_robot(request):
         robot = InfiniteRobot.create_robot(currency_type, max_price, min_price, per_invest, buy_percent, sell_percent, expect_money, account_id)
         user = User.load_from_account_id(account_id)
         robot_entity = RobotEntity.load_robot(robot)
-        robot_entity.set_huobi(huobi)
+
+        plantform = plantforms[user.plantform]
+
+
+        robot_entity.set_plantform(plantform)
         robot_entity.set_user(user)
         robot_entity.load_orders()
         robot_entity.init_robot_order()
@@ -361,7 +388,10 @@ def update_geometric_robot(request):
         robot_entity = RobotEntity.load_robot(robot)
         user = User.load_from_account_id(robot.robot_account_id)
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+        plantform = plantforms[user.plantform]
+
+
+        robot_entity.set_plantform(plantform)
         max_price = float(reqs['max_price'])
         min_price = float(reqs['min_price'])
         grid_num = int(reqs['grid_num'])
@@ -394,7 +424,11 @@ def update_infinite_robot(request):
         robot_entity = RobotEntity.load_robot(robot)
         user = User.load_from_account_id(robot.robot_account_id)
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+
+        plantform = plantforms[user.plantform]
+
+        robot_entity.set_plantform(plantform)   
+
         robot_entity.load_orders()
         max_price = float(reqs['max_price'])
         min_price = float(reqs['min_price'])
@@ -426,7 +460,11 @@ def get_trade_order_info(request):
         robot_entity = RobotEntity.load_robot(robot)
         user = User.load_from_account_id(robot.robot_account_id)
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+
+        plantform = plantforms[user.plantform]
+
+        robot_entity.set_plantform(plantform)   
+             
         robot_entity.load_orders()
         order_list = robot_entity.get_trade_order_list()
 
@@ -454,12 +492,15 @@ def get_pender_order_info(request):
         robot_entity = RobotEntity.load_robot(robot)
         user = User.load_from_account_id(robot.robot_account_id)
         robot_entity.set_user(user)
-        robot_entity.set_huobi(huobi)
+        plantform = plantforms[user.plantform]
+
+        robot_entity.set_plantform(plantform)   
+             
         robot_entity.load_orders()
         order_list = robot_entity.get_pender_order_list()
         ret['pender_data'] = order_list
         ret['pender_count'] = len(order_list)
-        ret['currency_price'] = robot_entity.huobi.get_currency_price(robot_entity.robot.robot_currency_type)
+        ret['currency_price'] = robot_entity.plantform.get_currency_price(robot_entity.robot.robot_currency_type)
         ret['per_invest'] = str('%g' % robot_entity.policy.grid_invest)
 
         ret['message'] = '数据更新成功'
@@ -505,13 +546,41 @@ def get_log(request):
 
     return JsonResponse(ret)
 
+def update_plantform_price(requests):
+    ret = {'status': STATUS_ERROR, 'message': None}
+    reqs = requests.GET
+    try:
+        plantform_name = reqs['plantform']
+        PlantForm.update_price(plantforms, plantform_name)
+
+    except Exception as e:
+        logger.error(repr(e))
+        ret['message'] = repr(e)
+
+    return JsonResponse(ret)
 
 def update(requests):
 
     ret = {'status': STATUS_ERROR, 'message': None}
+    reqs = requests.GET
 
     try:
-        huobi.update_price()
+        plantform_name = reqs['plantform']
+
+        robots = Robot.objects.filter(robot_status=ROBOT_OK) 
+
+        for robot in robots:
+            user = User.load_from_account_id(robot.robot_account_id)
+            if user.plantform != plantform_name:
+                continue               
+            if random.randint(1, check_frequency[plantform_name]) == MAGIC_NUMBER:
+                robot_entity = RobotEntity.load_robot(robot)
+                robot_entity.set_user(user)
+                plantform = plantforms[user.plantform]
+                robot_entity.set_plantform(plantform)   
+                robot_entity.check_orders()
+                # logger.error(plantform_name+":  robot " + str(robot.robot_id) + "check!")
+
         orders_wait = Order.objects.filter(order_status=ORDER_WAIT)
         robot_id_list = []
         robot_buy_orders = {}
@@ -532,14 +601,18 @@ def update(requests):
                     robot_sell_orders[robot_id] = [order]
                 else:
                     robot_sell_orders[robot_id].append(order)
-
         for robot_id in robot_id_list:
             robot = Robot.objects.get(robot_id=robot_id)
             robot_entity = RobotEntity.load_robot(robot)
             user = User.load_from_account_id(robot.robot_account_id)
             robot_entity.set_user(user)
-            robot_entity.set_huobi(huobi)
 
+            if user.plantform != plantform_name or robot.robot_status == ROBOT_DESTORYING or robot.robot_status == ROBOT_CREATING:
+                continue
+
+            plantform = plantforms[user.plantform]
+            robot_entity.set_plantform(plantform)   
+                
             if robot_id in robot_buy_orders.keys():
                 sorted_buy_orders = robot_buy_orders[robot_id]
                 sorted_buy_orders.sort(key=lambda x: float(math.fabs(x.order_price)), reverse=True)
@@ -547,78 +620,12 @@ def update(requests):
                     updated_order = robot_entity.update_order_status(sorted_buy_orders[i])
                     if robot.robot_policy_type == INFINITE_POLICY and updated_order.order_status == ORDER_WAIT:
                         robot_entity.retrieve_order(sorted_buy_orders[i])
-            
             if robot_id in robot_sell_orders.keys():
                 sorted_sell_orders = robot_sell_orders[robot_id]
                 sorted_sell_orders.sort(key=lambda x: float(math.fabs(x.order_price)))
                 for i in range(min(len(sorted_sell_orders), BASE_ORDER_NUM)):
                     robot_entity.update_order_status(sorted_sell_orders[i])
-            
 
-
-
-
-        # currency_orders = {}
-        # orders = []
-
-        # for order in orders_wait:
-        #     currency_type = order.order_currency_type
-        #     if currency_type not in currency_orders.keys():
-        #         order_list = [order]
-        #         currency_orders[currency_type] = order_list
-        #     else:
-        #         currency_orders[currency_type].append(order)
-
-        # for currency_type in currency_arry:
-        #     robots_num = Robot.objects.filter(robot_currency_type=currency_type, robot_status=ROBOT_OK)
-        #     if currency_type not in currency_orders.keys():
-        #         continue
-        #     order_list = currency_orders[currency_type]
-        #     orders_num = min(int(BASE_ORDER_NUM * len(robots_num)), len(order_list))
-        #     order_list.sort(key=lambda x: float(math.fabs(x.order_price - huobi.get_currency_price(x.order_currency_type))))
-
-        #     for i in range(orders_num):            
-        #         orders.append(order_list[i])
-
-        # robot_orders = {}
-        # order_num = min(len(orders), MAX_ORDER_NUM)
-
-        # for i in range(order_num):
-        #     robot_id = orders[i].robot_id
-        #     if robot_id not in robot_orders.keys():
-        #         order_list = [orders[i]]
-        #         robot_orders[robot_id] = order_list
-        #     else:
-        #         robot_orders[robot_id].append(orders[i])
-
-        # for k, v in robot_orders.items():
-        #     robot = Robot.objects.get(robot_id=k)
-        #     if robot.robot_policy_type == INFINITE_POLICY:
-        #         continue
-        #     order_list = v
-        #     robot_entity = RobotEntity.load_robot(robot)
-        #     user = User.load_from_account_id(robot.robot_account_id)
-        #     robot_entity.set_user(user)
-        #     robot_entity.set_huobi(huobi)
-        #     robot_entity.update_order(order_list)
-
-        # infinite_robots = Robot.objects.filter(robot_policy_type=INFINITE_POLICY, robot_status=ROBOT_OK)
-        # for robot in infinite_robots:
-        #     robot_entity = RobotEntity.load_robot(robot)
-        #     user = User.load_from_account_id(robot.robot_account_id)
-        #     robot_entity.set_user(user)
-        #     robot_entity.set_huobi(huobi)
-        #     try:
-        #         sell_order_list = Order.objects.filter(robot_id=robot_entity.robot.robot_id, order_status=ORDER_WAIT, order_type=ORDER_SELL)
-        #         sell_order_list = list(sell_order_list)
-        #         if len(sell_order_list) != 0:
-        #             sell_order_list.sort(key=lambda x: x.order_price)
-        #             for i in range(int(BASE_ORDER_NUM)):
-        #                 robot_entity.update_order(sell_order_list[i])
-        #         buy_orders = robot_entity.get_buy_orders()
-        #         robot_entity.retrieve_order(buy_orders[0])
-        #     except Exception as e:
-        #         pass
 
         ret['status'] = STATUS_OK
         ret['message'] = '数据更新成功'
@@ -635,14 +642,17 @@ def check_robots(request):
     ret = {'status': STATUS_ERROR, 'message': None}
 
     try:
-
         robots = Robot.objects.filter(robot_status=ROBOT_OK)
 
         for robot in robots:
             robot_entity = RobotEntity.load_robot(robot)
             user = User.load_from_account_id(robot.robot_account_id)
             robot_entity.set_user(user)
-            robot_entity.set_huobi(huobi)
+
+            plantform = plantforms[user.plantform]
+
+            robot_entity.set_plantform(plantform)   
+                
             robot_entity.check_orders()
 
         ret['status'] = STATUS_OK
@@ -659,7 +669,7 @@ def clear_api(request):
     ret = {'status': STATUS_ERROR, 'message': None}
 
     try:
-        huobi.clear_accounts()
+        PlantForm.clear_accounts()
         ret['status'] = STATUS_OK
 
     except Exception as e:
@@ -695,3 +705,4 @@ def clear_orders(request):
         logger.error(repr(e))
 
     return JsonResponse(ret)
+

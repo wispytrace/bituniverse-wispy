@@ -3,6 +3,8 @@ import time
 
 import django
 
+from bitApp.core.user import User
+
 # Create your tests here.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bitBack.settings")
 django.setup()
@@ -14,229 +16,59 @@ from huobi.client.market import MarketClient
 from huobi.client.trade import TradeClient
 from huobi.client.account import AccountClient
 from huobi.constant import *
-from bitApp.core.platform import *
+from bitApp.core.plantform import *
 
 from bitApp.config import *
 # from bitApp.services import *
 import datetime
 import json
-
+from binance.spot import Spot as Client
 class Test(TestCase):
 
 
-    # def test_currency_type(self):
-    #     generic_client = GenericClient()
-    #     generic_client = GenericClient()
-    #     list_symbol = generic_client.get_exchange_symbols()
-    #     list_currency = generic_client.get_reference_currencies()
-    #     char = "{"
-    #     for iten in list_symbol:
-    #         char += "\"" + iten.symbol + '\", '
-    #         print(iten.symbol)
+    def test_bian(self):
+        api_key = "gvFyqKFChhxZhhux3mvuHYabXy0vRNfWQfwDjTDZk8Ad85LWa3IAmtAN30ct5oTo"
+        secret_key = "tyNqwXYAP97ifhyfFLhewwdTytYoe8NHkSXZ41h6Xrwqmq32sVgPKhCuxYGmSHpg"
+        # spot_client = Client(api_key, secret_key)
+        # print(spot_client.user_asset(asset="eth", recvWindow=30000)[0]['free'])
+        # spot_client = Client(base_url="https://testnet.binance.vision")
 
-    #     print(char)
+        # print(spot_client.avg_price("ETHUSDT")['price'])
+        # if spot_client.sub_account_list(recvWindow=60000)['success'] == True:
+        #     print("successful")
 
-    # def test_currency_log(self):
-    #     """
-    #     The summary of trading in the market for the last 24 hours
+        client = Client(api_key, secret_key)
+        # print(client.account(recvWindow=60000))
 
-    #     :member
-    #         id: response ID
-    #         open: The opening price of last 24 hours.
-    #         close: The last price of last 24 hours.
-    #         amount: The aggregated trading volume in USDT.
-    #         high: The high price of last 24 hours.
-    #         low: The low price of last 24 hours.
-    #         count: The number of completed trades.
-    #         volume: The trading volume in base currency of last 24 hours.
-    #         version: inner data
-    #     """
-    #     print(datetime.datetime.now().timestamp())
+        params = {
+            "symbol": "BTCUSDT",
+            "side": "BUY",
+            "type": "MARKET",
+            # "timeInForce": "GTC",
+            "quantity": 0.002,
+            # "price": 17000,
+            "recvWindow": 60000,
+        }
+        bian = BiAn()
+        user = User(-1, api_key, secret_key, bian)
+        rid = str(bian.post_order("BTCUSDT", ORDER_SELL, 0.002, 17000, user))
+        
+        order = Order(order_record_id=rid, robot_id=1,
+                      order_currency_type="BTCUSDT", order_type=ORDER_SELL,
+                      order_amount=0.002,
+                      order_price=17000, order_status=ORDER_WAIT, order_create_time=datetime.datetime.now(),
+                      order_finish_time=None)
 
-    #     market_client = MarketClient()
-    #     generic_client = GenericClient()
-    #     print(generic_client.get_exchange_timestamp())
-    #     now_time = int(generic_client.get_exchange_timestamp() / 1000 - 24*3600)
-    #     now_time = datetime.datetime.fromtimestamp(now_time)
-    #     currency = market_client.get_market_detail('btcusdt')
-    #     print(currency.close)
+        # order.save()
+        # print(order.order_record_id)
+        response = bian.cancel_order(order, user)
+        # response = client.new_order(**params)
+        # print(response)
+        response = client.get_order("BTCUSDT", orderId=order.order_record_id, recvWindow=60000)
+        # print(response)
+        # response = client.get_order("BTCUSDT", orderId='15960105783', recvWindow=60000)
+        print(response)
 
-        # res = CurrencyPriceLog.objects.all()
-        # new_id = len(res)
-        #
-        # log = CurrencyPriceLog(id=new_id, type=currency_dict['btcusdt'], date=now_time, price=currency.close)
-        # log.save()
-        # res = CurrencyPriceLog.objects.all()
-        # for var in res:
-        #     print(var.__dict__)
-
-    # def test_get_my_account(self):
-    #     account_client = AccountClient(api_key=g_api_key, secret_key=g_secret_key)
-
-        # account_type = "spot"
-        # asset_valuation = account_client.get_account_asset_valuation(account_type=account_type,
-        #                                                              valuation_currency="usd")
-        # asset_valuation.print_object()
-        #
-        # asset_valuation = account_client.get_account_asset_valuation(account_type=account_type,
-        #                                                              valuation_currency="btc")
-        # asset_valuation.print_object()
-        #
-    #     acctounts = account_client.get_accounts()
-    #     for acctount in acctounts:
-
-    #         print(acctount.print_object(), acctount.id)
-    #     list_obj = account_client.get_balance(account_id=g_account_id)
-    #     for item in list_obj:
-    #         if item.currency != 'btc' and item.currency != 'usdt':
-    #             continue
-    #         item.print_object()
-
-    # def test_feerate(self):
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     list_obj = trade_client.get_feerate(symbols="btcusdt")[0]
-    #     print('挂单价: ', list_obj.maker_fee)
-    #     print('吃单价: ', list_obj.taker_fee)
-
-    # def test_buy_in(self):
-    #     symbol_test = 'btcusdt'
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     # amount * price = total money
-    #     order_id = trade_client.create_order(symbol=symbol_test, account_id=g_account_id, order_type=OrderType.BUY_LIMIT_MAKER, source=OrderSource.API, amount=0.0001, price=get_currency_price(symbol_test))
-    #     print('order id:', order_id)
-    #     self.test_get_my_account()
-    #     # self.test_cancel(order_id)
-    #     pass
-
-    # def test_sell_out(self):
-    #     symbol_test = 'btcusdt'
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     try:
-    #         order_id = trade_client.create_order(symbol=symbol_test, account_id=g_account_id, order_type=OrderType.SELL_LIMIT_MAKER, source=OrderSource.API, amount=0.001, price=get_currency_price(symbol_test))
-    #     except Exception as e:
-    #         print(e)
-    #     print('sell order id=', order_id)
-    #     self.test_query()
-
-
-    # def test_query(self):
-    #     symbol_test_list = ["btcusdt"]
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     for symbol_test in symbol_test_list:
-    #         print(int(datetime.datetime.now().timestamp()*1000 -3600*24*7*1000))
-    #         list_obj = trade_client.get_history_orders(symbol=symbol_test, start_time=int(datetime.datetime.now().timestamp()*1000 - 3600*24*7*1000))
-    #         for info in list_obj:
-    #             try:
-    #                 trade_client.cancel_order(symbol_test, info.id)
-    #             except Exception as e:
-    #                 print(repr(e))
-    #                 continue
-    #             print('--------------------------------')
-    #             print(info.print_object())
-
-        # list_obj = trade_client.get_order(order_id=559250761557186)
-        # list_obj.print_object()
-
-    # def test_cancel(self, order_id=596836322187502):
-    #     symbol_test = 'btcusdt'
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     canceled_order_id = trade_client.cancel_order(symbol_test, order_id)
-    #     print(canceled_order_id)
-    #     print(order_id)
-
-    # def test_cancel_all(self):
-    #     symbol_test = 'btcusdt'
-    #     trade_client = TradeClient(api_key=g_api_key, secret_key=g_secret_key)
-    #     order_list = Order.objects.all()
-    #     print(len(order_list))
-
-    #     for order in order_list:
-    #         try:
-    #             print(order.order_record_id)
-    #             canceled_order_id = trade_client.cancel_order(symbol_test, order.order_record_id)
-    #         except Exception as e:
-    #             print(repr(e))
-    #             continue
-
-
-
-    # def test_get_balance(self):
-    #     print(get_usdt_balance())
-
-    # def test_add_normal_robot(self):
-
-    #     currency_type = 'btcusdt'
-    #     max_price = 150000
-    #     min_price = 1500
-    #     grid_num = 40
-    #     invest_num = 10000
-    #     invest_rate = 0.5
-
-    #     add_normal_robot(currency_type, max_price, min_price, grid_num, invest_num, invest_rate)
-
-
-    #     # pause_robot(robot_id=0)
-    #     res = RobotProfit.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    #     res = Robot.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    #     res = RobotPolicy.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    # def test_add_infinite_robot(self):
-
-    #     currency_type = 'btcusdt'
-    #     max_price = 150000
-    #     min_price = 1500
-    #     grid_num = 40
-    #     invest_num = 10000
-    #     invest_rate = 0.5
-    #     grid_profit_rate = 1
-
-    #     add_infinite_robot(currency_type, max_price, min_price, invest_num, grid_profit_rate)
-
-    #     res = Robot.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    #     res = RobotProfit.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    #     res = RobotPolicy.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-
-    # def test_create_order(self):
-
-    #     res = Order.objects.all()
-    #     print(res)
-    #     order_record_id = 22222222
-    #     robot_id = 1
-    #     currency_type = 'btcusdt'
-    #     order_num = 23213
-    #     order_price = 12123213
-    #     create_order(order_record_id, robot_id, currency_type, ORDER_SELL, order_num, order_price)
-
-    #     res = Order.objects.all()
-
-    #     for item in res:
-    #         print(item.__dict__)
-
-    #     print(get_trade_order_list(robot_id=1))
-    #     print(get_pender_order_list(robot_id=1))
 
 
     # def test_buy_onces(self):
@@ -244,17 +76,32 @@ class Test(TestCase):
     #     order_record_id = trade_client.create_order(symbol="btcusdt",
     #                                                            account_id=g_account_id,
     #                                                            order_type=OrderType.SELL_MARKET,
-    #                                                            source=OrderSource.API, amount=0.00735, price=None)
-    def test_save_order(self):
-        order = Order(order_id=12, order_record_id=12, robot_id=1,
-                order_currency_type="btcusdt", order_type=0,
-                order_amount=12,
-                order_price=1222, order_status=ORDER_WAIT, order_create_time=datetime.datetime.now(),
-                order_finish_time=None)
-        order.save()
-        orders = Order.objects.all()
-        for order in orders:
-            print(order.__dict__)
+    #                                                            source=OrderSource.API, amount=0.041, price=None)
+    # def test_save_order(self):
+        
+    #     order = Order(order_record_id=12, robot_id=1,
+    #             order_currency_type="btcusdt", order_type=0,
+    #             order_amount=12,
+    #             order_price=1222, order_status=ORDER_WAIT, order_create_time=datetime.datetime.now(),
+    #             order_finish_time=None)
+    #     order.save()
+    #     order = Order(order_id=12, order_record_id=12, robot_id=1,
+    #             order_currency_type="btcusdt", order_type=0,
+    #             order_amount=12,
+    #             order_price=1222, order_status=ORDER_WAIT, order_create_time=datetime.datetime.now(),
+    #             order_finish_time=None)
+    #     order.save()
+    #     orders = Order.objects.all()
+    #     orders = Order.objects.all().order_by("-order_id")
+    #     if len(orders) == 0:
+    #         order_id = 0
+    #     else:
+    #         order_id = orders[0].order_id + 1
+    #     for order in orders:
+    #         print(order.__dict__)
+    #         print(order_id)
+    
+    #     print(snowflake.client.get_guid())
 
     # def test_demo_all(self):
 

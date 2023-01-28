@@ -88,7 +88,7 @@ DATABASES = {
         # 'NAME': os.path.join(BASE_DIR, 'db.mysql'),
         'NAME': 'bituniverse',
         'USER': 'root',
-        'PASSWORD': 'semto2022',
+        'PASSWORD': 'aA3756125!',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     },
