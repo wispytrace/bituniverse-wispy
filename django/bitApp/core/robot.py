@@ -465,7 +465,7 @@ class GeometricRobot(RobotEntity):
         if len(sell_order_list) != 0:
             sell_base = sell_order_list[0].order_flag
 
-        ordes_num = len(buy_order_list) + len(sell_order_list)
+        orders_num = len(buy_order_list) + len(sell_order_list)
 
         for order in buy_order_list:
             # logger.error(str(buy_base) + ":  " + str(order.order_price) + ":   flag" + str(order.order_flag))
@@ -504,7 +504,7 @@ class GeometricRobot(RobotEntity):
                     order_price = round(order_price, 2)
                     created_order = self.create_order(ORDER_SELL, amount, order_price)
                     created_order.order_flag = updated_order.order_flag + 1
-                    created_order.order_flag.save()
+                    created_order.save()
                     
         for order in sell_order_list:
             # logger.error(str(sell_base) + ":  " + str(order.order_price) + ":   flag" + str(order.order_flag))
@@ -540,7 +540,7 @@ class GeometricRobot(RobotEntity):
                     order_price = round(order_price, 2)
                     created_order = self.create_order(ORDER_BUY, amount, order_price)
                     created_order.order_flag = updated_order.order_flag - 1
-                    created_order.order_flag.save()
+                    created_order.save()
 
         sell_order_list = Order.objects.filter(robot_id=self.robot.robot_id, order_status=ORDER_WAIT, order_type=ORDER_SELL)
         
@@ -641,7 +641,6 @@ class InfiniteRobot(RobotEntity):
         grid_profit_rate = sell_percent
         usdt_need = expect_money
         btc_need = 0
-
         parameter['currency_price'] = currency_price
         parameter['btc_num'] = str('%g' % btc_num)
         parameter['usdt_num'] = usdt_num
@@ -662,6 +661,7 @@ class InfiniteRobot(RobotEntity):
     
         self.policy.save()
         self.check_orders()
+        # self.retrieve_order(Order.objects.filter(robot_id=self.robot.robot_id, order_status=ORDER_WAIT, order_type=ORDER_BUY)[0])
 
     def get_parameter(self):
 
@@ -744,6 +744,12 @@ class InfiniteRobot(RobotEntity):
 
         if (self.robot.robot_status != ROBOT_OK) or (order.order_type != ORDER_BUY):
             return
+
+        # if order.order_refer_id != ORDER_NONE_REF and retrieve_order_price is None:
+        #     supplied_order = Order.objects.get(order_id=order.order_refer_id)
+        #     if supplied_order.order_status == ORDER_WAIT:
+        #         return
+
 
         currency_price = self.plantform.get_currency_price(self.robot.robot_currency_type)
 

@@ -3,7 +3,7 @@ import time
 import threading
 from bitApp.config import *
 
-URL_IP = 
+URL_IP = "http://8.210.174.164:8000/"
 
 
 def update_orders(plantform):
@@ -13,7 +13,7 @@ def update_orders(plantform):
     while True:
         try:
             update_res = requests.get(url=URL_IP+"api/update", params=data)
-            time.sleep(0.5)
+            # time.sleep(0.5)
             # print("update" + plantform)
         except Exception as e:
             time.sleep(1)
@@ -25,7 +25,7 @@ def update_prices(plantform):
     while True:
         try:
             update_res = requests.get(url=URL_IP+"api/update_plantform_price", params=data)
-            time.sleep(2)
+            time.sleep(0.5)
             # print("update_price" + plantform)
         except Exception as e:
             time.sleep(1)

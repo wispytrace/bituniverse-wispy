@@ -39,7 +39,6 @@ MAX_ORDER_NUM = 50
 BASE_ORDER_NUM = 1
 DISTANCE_RATIO = 0.1
 DISTANCE_MAX = 1e-4
-
 ORDER_DISTANCE = 1e-3
 
 MAX_REPOST_NUM = 2
@@ -58,6 +57,6 @@ OK_STR = 'OK'
 MAGIC_NUMBER = 13
 OK_DELAY_TIME = 0
 
-check_frequency = {HUOBI_STR: 200, OK_STR: 50}
+check_frequency = {HUOBI_STR: 200, OK_STR: 100}
 plantform_array = ['火币', 'OK']
 currency_arry = ["btcusdt", "ethusdt", "ltcusdt"]

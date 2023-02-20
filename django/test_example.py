@@ -9,6 +9,12 @@ import json
 from huobi.client.market import MarketClient
 
 
+
+api_key = "e0840ede-1025-4883-857d-0b75315dd682"
+secret_key = "06034CF106E7DCC4B01897D48956C1F3"
+passphrase = "Aa111111."
+
+
 if __name__ == '__main__':
 
     # flag是实盘与模拟盘的切换参数 flag is the key parameter which can help you to change between demo and real trading.
@@ -29,11 +35,11 @@ if __name__ == '__main__':
     # print(result['data'][0]['last'])
     # # trade api
     tradeAPI = Trade.TradeAPI(api_key, secret_key, passphrase, False, flag)
-    result = tradeAPI.get_order_list()['data']
-    for item in result:
-        order_id = item['ordId']
-        # result = tradeAPI.cancel_order('BTC-USDT', order_id)
-        print(result)
+    # result = tradeAPI.get_order_list()['data']
+    # for item in result:
+    #     order_id = item['ordId']
+    #     # result = tradeAPI.cancel_order('BTC-USDT', order_id)
+    #     print(result)
     # result = tradeAPI.place_order(instId='BTC-USDT', tdMode='cash', side='buy',
     #                               ordType='limit',px='17938', sz='0.0001')
     # # # 下单  Place Order

@@ -238,12 +238,13 @@ class HuoBi(PlantForm):
         return currency_price
 
     def update_price(self):
-        market_client = MarketClient()
-        result =  market_client.get_market_tickers()
-        for item in result:
-            for currency in currency_arry:
-                if currency == item.symbol:
-                    self.price_dict[currency] = item.close
+        pass
+        # market_client = MarketClient()
+        # result =  market_client.get_market_tickers()
+        # for item in result:
+        #     for currency in currency_arry:
+        #         if currency == item.symbol:
+        #             self.price_dict[currency] = item.close
         # currency_price = self.price_dict[currency]
         # return currency_price
 
@@ -370,11 +371,14 @@ class OKEx(PlantForm):
         accountAPI = AccountAPI.AccountAPI(user.api_key, secret_key, passphrase, False, self.flag)
         result = accountAPI.get_account(symbol_name.upper())
 
-        balance = result['data'][0]['details'][0]['availBal']
+        if result['data'][0]['details'] == []:
+            balance = 0
+        else:
+            balance = result['data'][0]['details'][0]['availBal']
+
         return balance     
 
     def get_currency_price(self, symbol_name):
-
 
         if self.price_dict.get(symbol_name) is None:
             api_key = ""

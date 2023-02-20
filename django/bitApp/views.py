@@ -250,7 +250,6 @@ def get_invest_parameter(request):
         account_id = int(reqs['account_id'])
         user = User.load_from_account_id(account_id)
         plantform = plantforms[user.plantform]
-
         if robot_type == GEOMETRIC_POLICY:
             currency_type = reqs['currency_type']
             max_price = float(reqs['max_price'])
@@ -618,7 +617,7 @@ def update(requests):
                 sorted_buy_orders.sort(key=lambda x: float(math.fabs(x.order_price)), reverse=True)
                 for i in range(min(len(sorted_buy_orders), BASE_ORDER_NUM)):
                     updated_order = robot_entity.update_order_status(sorted_buy_orders[i])
-                    if robot.robot_policy_type == INFINITE_POLICY and updated_order.order_status == ORDER_WAIT:
+                    if robot.robot_policy_type == INFINITE_POLICY and updated_order.order_status == ORDER_WAIT and (robot_id not in robot_sell_orders.keys()):
                         robot_entity.retrieve_order(sorted_buy_orders[i])
             if robot_id in robot_sell_orders.keys():
                 sorted_sell_orders = robot_sell_orders[robot_id]
